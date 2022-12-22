@@ -1,0 +1,62 @@
+Source: python-testtools
+Section: python
+Priority: optional
+Maintainer: Debian OpenStack <team+openstack@tracker.debian.org>
+Uploaders:
+ Thomas Goirand <zigo@debian.org>,
+ Jelmer Vernooij <jelmer@debian.org>,
+Build-Depends:
+ debhelper-compat (= 12),
+ dh-python,
+ openstack-pkg-tools (>= 99~),
+ python3-all,
+ python3-pbr,
+ python3-setuptools,
+ python3-sphinx,
+Build-Depends-Indep:
+ python3-extras,
+ python3-fixtures,
+ python3-testresources,
+ python3-testscenarios,
+Standards-Version: 4.1.1
+Vcs-Git: https://salsa.debian.org/openstack-team/python/python-testtools.git
+Vcs-Browser: https://salsa.debian.org/openstack-team/python/python-testtools
+Homepage: https://github.com/testing-cabal/testtools
+
+Package: python-testtools-doc
+Section: doc
+Architecture: all
+Depends:
+ ${misc:Depends},
+ ${sphinxdoc:Depends},
+Description: Extensions to the Python unittest library - doc
+ testtools (formerly pyunit3k) is a set of extensions to the Python standard
+ library's unit testing framework. These extensions have been derived from
+ years of experience with unit testing in Python and come from many different
+ sources. It's hoped that these extensions will make their way into the
+ standard library eventually. Also included are backports from Python trunk of
+ unittest features that are not otherwise available to existing unittest users.
+ .
+ This package contains the documentation.
+
+Package: python3-testtools
+Architecture: all
+Depends:
+ python3-distutils | libpython3.5-stdlib,
+ python3-extras,
+ python3-fixtures,
+ python3-pbr,
+ python3-pkg-resources,
+ ${misc:Depends},
+ ${python3:Depends},
+Suggests:
+ python-testtools-doc,
+Description: Extensions to the Python unittest library - Python 3.x
+ testtools (formerly pyunit3k) is a set of extensions to the Python standard
+ library's unit testing framework. These extensions have been derived from
+ years of experience with unit testing in Python and come from many different
+ sources. It's hoped that these extensions will make their way into the
+ standard library eventually. Also included are backports from Python trunk of
+ unittest features that are not otherwise available to existing unittest users.
+ .
+ This package contains the libraries for Python 3.x.

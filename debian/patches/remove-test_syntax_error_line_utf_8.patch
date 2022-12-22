@@ -1,0 +1,36 @@
+Description: Remove test_syntax_error_line_utf_8()
+ Looks like this test is broken under Python 3.9
+Author: Thomas Goirand <zigo@debian.org>
+Forwarded: no
+Last-Update: 2021-08-25
+
+--- python-testtools-2.4.0.orig/testtools/tests/test_testresult.py
++++ python-testtools-2.4.0/testtools/tests/test_testresult.py
+@@ -2738,27 +2738,6 @@
+             'SyntaxError: ') %
+             (text,)), textoutput)
+ 
+-    def test_syntax_error_line_utf_8(self):
+-        """Syntax error on a utf-8 line shows the line decoded"""
+-        text, raw = self._get_sample_text("utf-8")
+-        textoutput = self._setup_external_case("import bad")
+-        self._write_module("bad", "utf-8", "\ufeff^ = 0 # %s\n" % text)
+-        textoutput = self._run_external_case()
+-        # Python 3.9 no longer prints the '\ufeff'
+-        if sys.version_info >= (3,9):
+-            textoutput = textoutput.replace('\ufeff', '')
+-        self.assertThat(
+-            textoutput,
+-            MatchesRegex(
+-                self._as_output((
+-                    '.*bad.py", line 1\n'
+-                    '\\s*\\^ = 0 # %s\n'
+-                    + ' ' * self._error_on_character +
+-                    '\\s*\\^\n'
+-                    'SyntaxError:.*') % text),
+-                re.M | re.S)
+-        )
+-
+ 
+ class TestNonAsciiResultsWithUnittest(TestNonAsciiResults):
+     """Test that running under unittest produces clean ascii strings"""

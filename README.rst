@@ -16,6 +16,9 @@ If you would like to learn more about testtools, consult our documentation in
 the 'doc/' directory.  You might like to start at 'doc/overview.rst' or
 'doc/for-test-authors.rst'.
 
+To build HTML versions of the documentation, make sure you have
+sphinx installed and run ``make docs``.
+
 
 Licensing
 ---------
@@ -31,7 +34,7 @@ under the same license as Python, see LICENSE for details.
 Supported platforms
 -------------------
 
- * Python 3.5+ or PyPy3
+ * Python 3.6+ or PyPy3
 
 If you would like to use testtools for earlier Pythons, consult the compatibility docs:
 
@@ -44,7 +47,8 @@ tested on Linux and macOS.
 Optional Dependencies
 ---------------------
 
-If you would like to use our Twisted support, then you will need Twisted.
+If you would like to use our Twisted support, then you will need the
+``testtools[twisted]`` extra.
 
 If you want to use ``fixtures`` then you can either install fixtures (e.g. from
 https://launchpad.net/python-fixtures or https://pypi.python.org/pypi/fixtures)

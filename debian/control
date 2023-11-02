@@ -8,13 +8,12 @@ Uploaders:
 Build-Depends:
  debhelper-compat (= 12),
  dh-python,
- openstack-pkg-tools (>= 99~),
+ openstack-pkg-tools,
  python3-all,
  python3-pbr,
  python3-setuptools,
  python3-sphinx,
 Build-Depends-Indep:
- python3-extras,
  python3-fixtures,
  python3-testresources,
  python3-testscenarios,
@@ -29,6 +28,7 @@ Architecture: all
 Depends:
  ${misc:Depends},
  ${sphinxdoc:Depends},
+Multi-Arch: foreign
 Description: Extensions to the Python unittest library - doc
  testtools (formerly pyunit3k) is a set of extensions to the Python standard
  library's unit testing framework. These extensions have been derived from
@@ -42,8 +42,7 @@ Description: Extensions to the Python unittest library - doc
 Package: python3-testtools
 Architecture: all
 Depends:
- python3-distutils | libpython3.5-stdlib,
- python3-extras,
+ python3-distutils,
  python3-fixtures,
  python3-pbr,
  python3-pkg-resources,

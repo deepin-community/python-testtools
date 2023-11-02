@@ -30,7 +30,7 @@ import io
 import warnings
 import sys
 
-from fixtures import Fixture
+from fixtures import CompoundFixture, Fixture
 
 from testtools.content import Content, text_content
 from testtools.content_type import UTF8_TEXT
@@ -192,20 +192,6 @@ def run_with_log_observers(observers, function, *args, **kwargs):
 # This is a global so that users can call flush_logged_errors errors in their
 # test cases.
 _log_observer = _LogObserver()
-
-
-# XXX: Should really be in python-fixtures.
-# See https://github.com/testing-cabal/fixtures/pull/22.
-class _CompoundFixture(Fixture):
-    """A fixture that combines many fixtures."""
-
-    def __init__(self, fixtures):
-        super().__init__()
-        self._fixtures = fixtures
-
-    def _setUp(self):
-        for fixture in self._fixtures:
-            self.useFixture(fixture)
 
 
 def flush_logged_errors(*error_types):
@@ -411,7 +397,7 @@ class AsynchronousDeferredRunTest(_DeferredRunTest):
             fixtures.append(_NoTwistedLogObservers())
         if self._store_twisted_logs:
             fixtures.append(CaptureTwistedLogs())
-        return _CompoundFixture(fixtures)
+        return CompoundFixture(fixtures)
 
     def _run_core(self):
         # XXX: Blatting over the namespace of the test case isn't a nice thing
@@ -506,7 +492,7 @@ def assert_fails_with(d, *exc_types, **kwargs):
 
     def got_success(result):
         raise failureException(
-            "{} not raised ({!r} returned)".format(expected_names, result))
+            f"{expected_names} not raised ({result!r} returned)")
 
     def got_failure(failure):
         if failure.check(*exc_types):
@@ -533,4 +519,4 @@ class UncleanReactorError(Exception):
             ret = str(junk)
         else:
             ret = repr(junk)
-        return '  {}\n'.format(ret)
+        return f'  {ret}\n'

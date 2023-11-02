@@ -10,7 +10,7 @@ export https_proxy=http://127.0.0.1:9
 	dh $@ --buildsystem=pybuild --with python3,sphinxdoc
 
 override_dh_auto_clean:
-	rm -rf build
+	rm -rf build .pybuild *.egg-info
 	find . -iname '*.pyc' -delete
 	for i in $$(find . -type d -iname __pycache__) ; do rm -rf $$i ; done
 

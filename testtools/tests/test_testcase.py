@@ -5,6 +5,7 @@
 from doctest import ELLIPSIS
 from pprint import pformat
 import sys
+import _thread
 import unittest
 
 from testtools import (
@@ -85,6 +86,14 @@ class TestPlaceHolder(TestCase):
         # shortDescription() returns that instead.
         test = PlaceHolder("test id", "description")
         self.assertEqual("description", test.shortDescription())
+
+    def test_testcase_is_hashable(self):
+        test = hash(self)
+        self.assertEqual(unittest.TestCase.__hash__(self), test)
+
+    def test_testcase_equals_edgecase(self):
+        # Not all python objects have a __dict__ attribute
+        self.assertFalse(self == _thread.RLock())
 
     def test_repr_just_id(self):
         # repr(placeholder) shows you how the object was constructed.
@@ -349,9 +358,11 @@ class TestAssertions(TestCase):
 
         exception = self.assertRaises(RuntimeError, raiseError)
         self.assertEqual(1, len(raisedExceptions))
-        self.assertTrue(
-            exception is raisedExceptions[0],
-            "{!r} is not {!r}".format(exception, raisedExceptions[0]))
+        self.assertIs(
+            exception,
+            raisedExceptions[0],
+            '{!r} is not {!r}'.format(exception, raisedExceptions[0])
+        )
 
     def test_assertRaises_with_multiple_exceptions(self):
         # assertRaises((ExceptionOne, ExceptionTwo), function) asserts that
@@ -382,26 +393,26 @@ class TestAssertions(TestCase):
         self.assertThat(
             lambda: self.assertRaises(Exception, foo),
             Raises(
-                MatchesException(self.failureException, '.*{!r}.*'.format(foo))))
+                MatchesException(self.failureException, f'.*{foo!r}.*')))
 
-    def test_assertRaisesRegexp(self):
-        # assertRaisesRegexp asserts that function raises particular exception
+    def test_assertRaisesRegex(self):
+        # assertRaisesRegex asserts that function raises particular exception
         # with particular message.
-        self.assertRaisesRegexp(RuntimeError, r"M\w*e", self.raiseError,
-                                RuntimeError, "Message")
+        self.assertRaisesRegex(RuntimeError, r"M\w*e", self.raiseError,
+                               RuntimeError, "Message")
 
-    def test_assertRaisesRegexp_wrong_error_type(self):
+    def test_assertRaisesRegex_wrong_error_type(self):
         # If function raises an exception of unexpected type,
-        # assertRaisesRegexp re-raises it.
-        self.assertRaises(ValueError, self.assertRaisesRegexp, RuntimeError,
+        # assertRaisesRegex re-raises it.
+        self.assertRaises(ValueError, self.assertRaisesRegex, RuntimeError,
                           r"M\w*e", self.raiseError, ValueError, "Message")
 
-    def test_assertRaisesRegexp_wrong_message(self):
+    def test_assertRaisesRegex_wrong_message(self):
         # If function raises an exception with unexpected message
-        # assertRaisesRegexp fails.
+        # assertRaisesRegex fails.
         self.assertFails(
             '"Expected" does not match "Observed"',
-            self.assertRaisesRegexp, RuntimeError, "Expected",
+            self.assertRaisesRegex, RuntimeError, "Expected",
             self.raiseError, RuntimeError, "Observed")
 
     def assertFails(self, message, function, *args, **kwargs):
@@ -516,7 +527,7 @@ class TestAssertions(TestCase):
 
     def test_assertIs(self):
         # assertIs asserts that an object is identical to another object.
-        self.assertIs(None, None)
+        self.assertIsNone(None)
         some_list = [42]
         self.assertIs(some_list, some_list)
         some_object = object()
@@ -645,7 +656,7 @@ class TestAssertions(TestCase):
         test = Test("test")
         result = test.run()
         details = test.getDetails()
-        self.assertTrue("Failed expectation" in details)
+        self.assertIn('Failed expectation', details)
 
     def test__force_failure_fails_test(self):
         class Test(TestCase):
@@ -734,7 +745,7 @@ class TestAssertions(TestCase):
             'a',
             repr('\xa7')[1:-1],
             "'''",
-            'actual    = {!r}'.format(b),
+            f'actual    = {b!r}',
             ': ' + message,
             ])
         self.assertFails(expected_error, self.assertEqual, a, b, message)
@@ -1097,7 +1108,7 @@ class TestExpectedFailure(TestWithDetails):
         class ReferenceTest(TestCase):
             @unittest.expectedFailure
             def test_fails_expectedly(self):
-                self.assertEquals(1, 0)
+                self.assertEqual(1, 0)
 
         test = ReferenceTest('test_fails_expectedly')
         result = test.run()
@@ -1107,7 +1118,7 @@ class TestExpectedFailure(TestWithDetails):
         class ReferenceTest(TestCase):
             @unittest.expectedFailure
             def test_passes_unexpectedly(self):
-                self.assertEquals(1, 1)
+                self.assertEqual(1, 1)
 
         test = ReferenceTest('test_passes_unexpectedly')
         result = test.run()
@@ -1453,7 +1464,7 @@ class TestSkipping(TestCase):
 
     def test_skip_causes_skipException(self):
         self.assertThat(
-            lambda: self.skip("Skip this test"),
+            lambda: self.skipTest("Skip this test"),
             Raises(MatchesException(self.skipException)))
 
     def test_can_use_skipTest(self):
@@ -1672,7 +1683,7 @@ class TestSkipping(TestCase):
             setup_ran = False
 
             def setUp(self):
-                super(SkippingTestCase, self).setUp()
+                super().setUp()
                 self.setup_ran = True
 
             def test_skipped(self):
@@ -1687,7 +1698,7 @@ class TestSkipping(TestCase):
     def check_test_does_not_run_setup(self, test, reason):
         result = test.run()
         self.assertTrue(result.wasSuccessful())
-        self.assertTrue(reason in result.skip_reasons, result.skip_reasons)
+        self.assertIn(reason, result.skip_reasons, result.skip_reasons)
         self.assertFalse(test.setup_ran)
 
     def test_testtools_skip_decorator_does_not_run_setUp(self):

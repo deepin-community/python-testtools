@@ -84,13 +84,20 @@ of them will happily run testtools tests.  In particular:
 * testrepository_
 * Trial_
 * nose_
-* unittest2_
 * `zope.testrunner`_ (aka zope.testing)
 
 From now on, we'll assume that you know how to run your tests.
 
 Running test with Distutils
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. deprecated:: 2.6.0
+
+    Distutils integration was deprecated in 2.6.0. You should consider
+    replacing invocations of ``python setup.py test`` with a suitable
+    alternative such as ``tox``. Refer to `this issue`__ for more information.
+
+    .. __: https://github.com/pypa/setuptools/issues/1684
 
 If you are using Distutils_ to build your Python project, you can use the testtools
 Distutils_ command to integrate testtools into your Distutils_ workflow::
@@ -1455,7 +1462,6 @@ Here, ``repr(nullary)`` will be the same as ``repr(f)``.
 .. _testrepository: https://launchpad.net/testrepository
 .. _Trial: http://twistedmatrix.com/documents/current/core/howto/testing.html
 .. _nose: http://somethingaboutorange.com/mrl/projects/nose/
-.. _unittest2: http://pypi.python.org/pypi/unittest2
 .. _zope.testrunner: http://pypi.python.org/pypi/zope.testrunner/
 .. _xUnit test patterns: http://xunitpatterns.com/
 .. _fixtures: http://pypi.python.org/pypi/fixtures

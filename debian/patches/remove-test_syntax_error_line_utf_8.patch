@@ -4,9 +4,11 @@ Author: Thomas Goirand <zigo@debian.org>
 Forwarded: no
 Last-Update: 2021-08-25
 
---- python-testtools-2.4.0.orig/testtools/tests/test_testresult.py
-+++ python-testtools-2.4.0/testtools/tests/test_testresult.py
-@@ -2738,27 +2738,6 @@
+Index: python-testtools/testtools/tests/test_testresult.py
+===================================================================
+--- python-testtools.orig/testtools/tests/test_testresult.py
++++ python-testtools/testtools/tests/test_testresult.py
+@@ -2743,27 +2743,6 @@ class TestNonAsciiResults(TestCase):
              'SyntaxError: ') %
              (text,)), textoutput)
  

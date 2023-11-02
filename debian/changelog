@@ -1,3 +1,47 @@
+python-testtools (2.6.0-2) unstable; urgency=medium
+
+  * Uploading to unstable.
+
+ -- Thomas Goirand <zigo@debian.org>  Wed, 04 Oct 2023 22:51:10 +0200
+
+python-testtools (2.6.0-1) experimental; urgency=medium
+
+  * New upstream release.
+  * Fixed (b-)depends for this release.
+  * Removed patches applied upstream:
+    - py3.11-Fix_various_test_failures.patch
+    - py3.11-Upgrade_asserts_with_teyit.patch
+    - py3.11-fix-using-distribution.patch
+
+ -- Thomas Goirand <zigo@debian.org>  Tue, 29 Aug 2023 15:37:55 +0200
+
+python-testtools (2.5.0-5) unstable; urgency=medium
+
+  * Cleans better (Closes: #1047778).
+
+ -- Thomas Goirand <zigo@debian.org>  Mon, 21 Aug 2023 14:36:28 +0200
+
+python-testtools (2.5.0-4) unstable; urgency=medium
+
+  [ Debian Janitor ]
+  * Apply multi-arch hints.
+    + python-testtools-doc: Add Multi-Arch: foreign.
+
+  [ Thomas Goirand ]
+  * Add upstream py3.11 patches (Closes: #1026579):
+    - py3.11-Fix_various_test_failures.patch
+    - py3.11-Upgrade_asserts_with_teyit.patch
+  * Fix testing distutils (my own patch):
+    - py3.11-fix-using-distribution.patch
+
+ -- Thomas Goirand <zigo@debian.org>  Tue, 27 Dec 2022 13:53:30 +0100
+
+python-testtools (2.5.0-3) unstable; urgency=medium
+
+  * Add fix-testing-test_syntax_error.patch (Closes: #1002440).
+
+ -- Thomas Goirand <zigo@debian.org>  Thu, 23 Dec 2021 14:21:40 +0100
+
 python-testtools (2.5.0-2) unstable; urgency=medium
 
   * Uploading to unstable.

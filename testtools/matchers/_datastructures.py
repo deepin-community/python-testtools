@@ -1,12 +1,5 @@
 # Copyright (c) 2009-2015 testtools developers. See LICENSE for details.
 
-__all__ = [
-    'ContainsAll',
-    'MatchesListwise',
-    'MatchesSetwise',
-    'MatchesStructure',
-    ]
-
 """Matchers that operate with knowledge of Python data structures."""
 
 from ..helpers import map_values
@@ -14,8 +7,15 @@ from ._higherorder import (
     Annotate,
     MatchesAll,
     MismatchesAll,
-    )
+)
 from ._impl import Mismatch
+
+__all__ = [
+    "ContainsAll",
+    "MatchesListwise",
+    "MatchesSetwise",
+    "MatchesStructure",
+]
 
 
 def ContainsAll(items):
@@ -26,6 +26,7 @@ def ContainsAll(items):
     the matchee.
     """
     from ._basic import Contains
+
     return MatchesAll(*map(Contains, items), first_only=False)
 
 
@@ -59,9 +60,11 @@ class MatchesListwise:
 
     def match(self, values):
         from ._basic import HasLength
+
         mismatches = []
         length_mismatch = Annotate(
-            "Length mismatch", HasLength(len(self.matchers))).match(values)
+            "Length mismatch", HasLength(len(self.matchers))
+        ).match(values)
         if length_mismatch:
             mismatches.append(length_mismatch)
         for matcher, value in zip(self.matchers, values):
@@ -106,6 +109,7 @@ class MatchesStructure:
         Equals.
         """
         from ._basic import Equals
+
         return cls.byMatcher(Equals, **kwargs)
 
     @classmethod
@@ -120,6 +124,7 @@ class MatchesStructure:
     @classmethod
     def fromExample(cls, example, *attributes):
         from ._basic import Equals
+
         kwargs = {}
         for attr in attributes:
             kwargs[attr] = Equals(getattr(example, attr))
@@ -138,7 +143,7 @@ class MatchesStructure:
         kws = []
         for attr, matcher in sorted(self.kws.items()):
             kws.append(f"{attr}={matcher}")
-        return "{}({})".format(self.__class__.__name__, ', '.join(kws))
+        return "{}({})".format(self.__class__.__name__, ", ".join(kws))
 
     def match(self, value):
         matchers = []
@@ -189,20 +194,23 @@ class MatchesSetwise:
             if len(not_matched) == 0:
                 if len(remaining_matchers) > 1:
                     msg = "There were {} matchers left over: ".format(
-                        len(remaining_matchers))
+                        len(remaining_matchers)
+                    )
                 else:
                     msg = "There was 1 matcher left over: "
-                msg += ', '.join(map(str, remaining_matchers))
+                msg += ", ".join(map(str, remaining_matchers))
                 return Mismatch(msg)
             elif len(remaining_matchers) == 0:
                 if len(not_matched) > 1:
                     return Mismatch(
                         "There were {} values left over: {}".format(
-                            len(not_matched), not_matched))
+                            len(not_matched), not_matched
+                        )
+                    )
                 else:
                     return Mismatch(
-                        "There was 1 value left over: {}".format(
-                            not_matched))
+                        "There was 1 value left over: {}".format(not_matched)
+                    )
             else:
                 common_length = min(len(remaining_matchers), len(not_matched))
                 if common_length == 0:
@@ -216,13 +224,13 @@ class MatchesSetwise:
                     msg += f" and {len(extra_matchers)} extra matcher"
                     if len(extra_matchers) > 1:
                         msg += "s"
-                    msg += ': ' + ', '.join(map(str, extra_matchers))
+                    msg += ": " + ", ".join(map(str, extra_matchers))
                 elif len(not_matched) > len(remaining_matchers):
                     extra_values = not_matched[common_length:]
                     msg += f" and {len(extra_values)} extra value"
                     if len(extra_values) > 1:
                         msg += "s"
-                    msg += ': ' + str(extra_values)
+                    msg += ": " + str(extra_values)
                 return Annotate(
                     msg, MatchesListwise(remaining_matchers[:common_length])
-                    ).match(not_matched[:common_length])
+                ).match(not_matched[:common_length])

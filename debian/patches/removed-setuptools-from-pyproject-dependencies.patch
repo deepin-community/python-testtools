@@ -1,0 +1,16 @@
+Description: Removed setuptools from pyproject depends
+ Otherwise, python3-pkg-resource gets pulled.
+Bug-Debian: https://bugs.debian.org/1083715
+Forwarded: not-needed
+Last-Update: 2024-10-10
+
+--- python-testtools-2.7.2.orig/pyproject.toml
++++ python-testtools-2.7.2/pyproject.toml
+@@ -39,7 +39,6 @@ classifiers = [
+     "Topic :: Software Development :: Libraries :: Python Modules",
+     "Topic :: Software Development :: Testing",
+ ]
+-dependencies = ["setuptools; python_version>='3.12'"]
+ dynamic = ["version"]
+ requires-python = ">=3.8"
+ 

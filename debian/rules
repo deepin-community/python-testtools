@@ -3,25 +3,19 @@
 UPSTREAM_GIT := https://github.com/testing-cabal/testtools.git
 include /usr/share/openstack-pkg-tools/pkgos.make
 
-export http_proxy=http://127.0.0.1:9
-export https_proxy=http://127.0.0.1:9
+#export http_proxy=http://127.0.0.1:9
+#export https_proxy=http://127.0.0.1:9
+
+export SETUPTOOLS_SCM_PRETEND_VERSION=$(shell dpkg-parsechangelog -SVersion | sed -e 's/^[[:digit:]]*://' -e 's/[-].*//' -e 's/~/.0/' -e 's/+dfsg1//' | head -n 1)
+export PYBUILD_NAME=testtools
 
 %:
 	dh $@ --buildsystem=pybuild --with python3,sphinxdoc
 
 override_dh_auto_clean:
-	rm -rf build .pybuild *.egg-info
+	rm -rf build .pybuild *.egg-info testtools/_version.py
 	find . -iname '*.pyc' -delete
 	for i in $$(find . -type d -iname __pycache__) ; do rm -rf $$i ; done
-
-override_dh_auto_build:
-	echo "Do nothing..."
-
-override_dh_auto_install:
-	pkgos-dh_auto_install --no-py2
-	# Remove 2x compat file as it causes errors during byte compilation on installation.
-	echo 'raise SyntaxError' > \
-		$(CURDIR)/debian/python3-testtools/usr/lib/python3/dist-packages/testtools/_compat2x.py
 
 override_dh_sphinxdoc:
 ifeq (,$(findstring nodocs, $(DEB_BUILD_OPTIONS)))

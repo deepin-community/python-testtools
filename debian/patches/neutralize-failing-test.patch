@@ -7,7 +7,7 @@ Index: python-testtools/testtools/tests/test_testresult.py
 ===================================================================
 --- python-testtools.orig/testtools/tests/test_testresult.py
 +++ python-testtools/testtools/tests/test_testresult.py
-@@ -801,6 +801,7 @@ class TestStreamToDict(TestCase):
+@@ -937,6 +937,7 @@ class TestStreamToDict(TestCase):
      def test_bad_mime(self):
          # Testtools was making bad mime types, this tests that the specific
          # corruption is catered for.

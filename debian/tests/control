@@ -1,5 +1,5 @@
 Tests: testsuite-py3
 Depends:
- python3-testscenarios,
- python3-testtools,
+ @,
+ @builddeps@,
 Restrictions: allow-stderr

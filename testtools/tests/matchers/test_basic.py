@@ -6,7 +6,7 @@ from testtools import TestCase
 from testtools.compat import (
     text_repr,
     _b,
-    )
+)
 from testtools.matchers._basic import (
     _BinaryMismatch,
     Contains,
@@ -23,7 +23,7 @@ from testtools.matchers._basic import (
     NotEquals,
     SameMembers,
     StartsWith,
-    )
+)
 from testtools.tests.helpers import FullStackRunTest
 from testtools.tests.matchers.helpers import TestMatchersInterface
 
@@ -38,11 +38,12 @@ class Test_BinaryMismatch(TestCase):
     class CustomRepr:
         def __init__(self, repr_string):
             self._repr_string = repr_string
+
         def __repr__(self):
-            return '<object ' + self._repr_string + '>'
+            return "<object " + self._repr_string + ">"
 
     def test_short_objects(self):
-        o1, o2 = self.CustomRepr('a'), self.CustomRepr('b')
+        o1, o2 = self.CustomRepr("a"), self.CustomRepr("b")
         mismatch = _BinaryMismatch(o1, "!~", o2)
         self.assertEqual(mismatch.describe(), f"{o1!r} !~ {o2!r}")
 
@@ -60,7 +61,7 @@ class Test_BinaryMismatch(TestCase):
                 "!~",
                 text_repr(self._long_b, multiline=True),
                 text_repr(one_line_b),
-            )
+            ),
         )
 
     def test_long_unicode(self):
@@ -72,7 +73,7 @@ class Test_BinaryMismatch(TestCase):
                 "!~",
                 text_repr(self._long_u, multiline=True),
                 text_repr(one_line_u),
-            )
+            ),
         )
 
     def test_long_mixed_strings(self):
@@ -83,7 +84,7 @@ class Test_BinaryMismatch(TestCase):
                 "!~",
                 text_repr(self._long_u, multiline=True),
                 text_repr(self._long_b, multiline=True),
-            )
+            ),
         )
 
     def test_long_bytes_and_object(self):
@@ -95,7 +96,7 @@ class Test_BinaryMismatch(TestCase):
                 "!~",
                 repr(obj),
                 text_repr(self._long_b, multiline=True),
-            )
+            ),
         )
 
     def test_long_unicode_and_object(self):
@@ -107,42 +108,42 @@ class Test_BinaryMismatch(TestCase):
                 "!~",
                 repr(obj),
                 text_repr(self._long_u, multiline=True),
-            )
+            ),
         )
 
 
 class TestEqualsInterface(TestCase, TestMatchersInterface):
-
     matches_matcher = Equals(1)
     matches_matches = [1]
     matches_mismatches = [2]
 
-    str_examples = [("Equals(1)", Equals(1)), ("Equals('1')", Equals('1'))]
+    str_examples = [("Equals(1)", Equals(1)), ("Equals('1')", Equals("1"))]
 
     describe_examples = [
         ("2 != 1", 2, Equals(1)),
-        (("!=:\n"
-          "reference = 'abcdefghijklmnopqrstuvwxyz0123456789'\n"
-          "actual    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'\n"),
-         'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-         Equals('abcdefghijklmnopqrstuvwxyz0123456789')),
+        (
+            (
+                "!=:\n"
+                "reference = 'abcdefghijklmnopqrstuvwxyz0123456789'\n"
+                "actual    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'\n"
+            ),
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            Equals("abcdefghijklmnopqrstuvwxyz0123456789"),
+        ),
     ]
 
 
 class TestNotEqualsInterface(TestCase, TestMatchersInterface):
-
     matches_matcher = NotEquals(1)
     matches_matches = [2]
     matches_mismatches = [1]
 
-    str_examples = [
-        ("NotEquals(1)", NotEquals(1)), ("NotEquals('1')", NotEquals('1'))]
+    str_examples = [("NotEquals(1)", NotEquals(1)), ("NotEquals('1')", NotEquals("1"))]
 
     describe_examples = [("1 == 1", 1, NotEquals(1))]
 
 
 class TestIsInterface(TestCase, TestMatchersInterface):
-
     foo = object()
     bar = object()
 
@@ -156,73 +157,72 @@ class TestIsInterface(TestCase, TestMatchersInterface):
 
 
 class TestIsInstanceInterface(TestCase, TestMatchersInterface):
-
-    class Foo:pass
+    class Foo:
+        pass
 
     matches_matcher = IsInstance(Foo)
     matches_matches = [Foo()]
     matches_mismatches = [object(), 1, Foo]
 
     str_examples = [
-            ("IsInstance(str)", IsInstance(str)),
-            ("IsInstance(str, int)", IsInstance(str, int)),
-            ]
+        ("IsInstance(str)", IsInstance(str)),
+        ("IsInstance(str, int)", IsInstance(str, int)),
+    ]
 
     describe_examples = [
-            ("'foo' is not an instance of int", 'foo', IsInstance(int)),
-            ("'foo' is not an instance of any of (int, type)", 'foo',
-             IsInstance(int, type)),
-            ]
+        ("'foo' is not an instance of int", "foo", IsInstance(int)),
+        (
+            "'foo' is not an instance of any of (int, type)",
+            "foo",
+            IsInstance(int, type),
+        ),
+    ]
 
 
 class TestLessThanInterface(TestCase, TestMatchersInterface):
-
     matches_matcher = LessThan(4)
     matches_matches = [-5, 3]
     matches_mismatches = [4, 5, 5000]
 
     str_examples = [
         ("LessThan(12)", LessThan(12)),
-        ]
+    ]
 
     describe_examples = [
-        ('5 >= 4', 5, LessThan(4)),
-        ('4 >= 4', 4, LessThan(4)),
-        ]
+        ("5 >= 4", 5, LessThan(4)),
+        ("4 >= 4", 4, LessThan(4)),
+    ]
 
 
 class TestGreaterThanInterface(TestCase, TestMatchersInterface):
-
     matches_matcher = GreaterThan(4)
     matches_matches = [5, 8]
     matches_mismatches = [-2, 0, 4]
 
     str_examples = [
         ("GreaterThan(12)", GreaterThan(12)),
-        ]
+    ]
 
     describe_examples = [
-        ('4 <= 5', 4, GreaterThan(5)),
-        ('4 <= 4', 4, GreaterThan(4)),
-        ]
+        ("4 <= 5", 4, GreaterThan(5)),
+        ("4 <= 4", 4, GreaterThan(4)),
+    ]
 
 
 class TestContainsInterface(TestCase, TestMatchersInterface):
-
-    matches_matcher = Contains('foo')
-    matches_matches = ['foo', 'afoo', 'fooa']
-    matches_mismatches = ['f', 'fo', 'oo', 'faoo', 'foao']
+    matches_matcher = Contains("foo")
+    matches_matches = ["foo", "afoo", "fooa"]
+    matches_mismatches = ["f", "fo", "oo", "faoo", "foao"]
 
     str_examples = [
         ("Contains(1)", Contains(1)),
-        ("Contains('foo')", Contains('foo')),
-        ]
+        ("Contains('foo')", Contains("foo")),
+    ]
 
     describe_examples = [("1 not in 2", 2, Contains(1))]
 
 
 class DoesNotStartWithTests(TestCase):
-
     run_tests_with = FullStackRunTest
 
     def test_describe(self):
@@ -230,23 +230,24 @@ class DoesNotStartWithTests(TestCase):
         self.assertEqual("'fo' does not start with 'bo'.", mismatch.describe())
 
     def test_describe_non_ascii_unicode(self):
-        string = "A\xA7"
-        suffix = "B\xA7"
+        string = "A\xa7"
+        suffix = "B\xa7"
         mismatch = DoesNotStartWith(string, suffix)
-        self.assertEqual("{} does not start with {}.".format(
-            text_repr(string), text_repr(suffix)),
-            mismatch.describe())
+        self.assertEqual(
+            "{} does not start with {}.".format(text_repr(string), text_repr(suffix)),
+            mismatch.describe(),
+        )
 
     def test_describe_non_ascii_bytes(self):
-        string = _b("A\xA7")
-        suffix = _b("B\xA7")
+        string = _b("A\xa7")
+        suffix = _b("B\xa7")
         mismatch = DoesNotStartWith(string, suffix)
-        self.assertEqual(f"{string!r} does not start with {suffix!r}.",
-            mismatch.describe())
+        self.assertEqual(
+            f"{string!r} does not start with {suffix!r}.", mismatch.describe()
+        )
 
 
 class StartsWithTests(TestCase):
-
     run_tests_with = FullStackRunTest
 
     def test_str(self):
@@ -254,12 +255,12 @@ class StartsWithTests(TestCase):
         self.assertEqual("StartsWith('bar')", str(matcher))
 
     def test_str_with_bytes(self):
-        b = _b("\xA7")
+        b = _b("\xa7")
         matcher = StartsWith(b)
         self.assertEqual(f"StartsWith({b!r})", str(matcher))
 
     def test_str_with_unicode(self):
-        u = "\xA7"
+        u = "\xa7"
         matcher = StartsWith(u)
         self.assertEqual(f"StartsWith({u!r})", str(matcher))
 
@@ -283,7 +284,6 @@ class StartsWithTests(TestCase):
 
 
 class DoesNotEndWithTests(TestCase):
-
     run_tests_with = FullStackRunTest
 
     def test_describe(self):
@@ -291,23 +291,24 @@ class DoesNotEndWithTests(TestCase):
         self.assertEqual("'fo' does not end with 'bo'.", mismatch.describe())
 
     def test_describe_non_ascii_unicode(self):
-        string = "A\xA7"
-        suffix = "B\xA7"
+        string = "A\xa7"
+        suffix = "B\xa7"
         mismatch = DoesNotEndWith(string, suffix)
-        self.assertEqual("{} does not end with {}.".format(
-            text_repr(string), text_repr(suffix)),
-            mismatch.describe())
+        self.assertEqual(
+            "{} does not end with {}.".format(text_repr(string), text_repr(suffix)),
+            mismatch.describe(),
+        )
 
     def test_describe_non_ascii_bytes(self):
-        string = _b("A\xA7")
-        suffix = _b("B\xA7")
+        string = _b("A\xa7")
+        suffix = _b("B\xa7")
         mismatch = DoesNotEndWith(string, suffix)
-        self.assertEqual(f"{string!r} does not end with {suffix!r}.",
-            mismatch.describe())
+        self.assertEqual(
+            f"{string!r} does not end with {suffix!r}.", mismatch.describe()
+        )
 
 
 class EndsWithTests(TestCase):
-
     run_tests_with = FullStackRunTest
 
     def test_str(self):
@@ -315,12 +316,12 @@ class EndsWithTests(TestCase):
         self.assertEqual("EndsWith('bar')", str(matcher))
 
     def test_str_with_bytes(self):
-        b = _b("\xA7")
+        b = _b("\xa7")
         matcher = EndsWith(b)
         self.assertEqual(f"EndsWith({b!r})", str(matcher))
 
     def test_str_with_unicode(self):
-        u = "\xA7"
+        u = "\xa7"
         matcher = EndsWith(u)
         self.assertEqual(f"EndsWith({u!r})", str(matcher))
 
@@ -344,79 +345,96 @@ class EndsWithTests(TestCase):
 
 
 class TestSameMembers(TestCase, TestMatchersInterface):
-
-    matches_matcher = SameMembers([1, 1, 2, 3, {'foo': 'bar'}])
+    matches_matcher = SameMembers([1, 1, 2, 3, {"foo": "bar"}])
     matches_matches = [
-        [1, 1, 2, 3, {'foo': 'bar'}],
-        [3, {'foo': 'bar'}, 1, 2, 1],
-        [3, 2, 1, {'foo': 'bar'}, 1],
-        (2, {'foo': 'bar'}, 3, 1, 1),
-        ]
+        [1, 1, 2, 3, {"foo": "bar"}],
+        [3, {"foo": "bar"}, 1, 2, 1],
+        [3, 2, 1, {"foo": "bar"}, 1],
+        (2, {"foo": "bar"}, 3, 1, 1),
+    ]
     matches_mismatches = [
         {1, 2, 3},
         [1, 1, 2, 3, 5],
-        [1, 2, 3, {'foo': 'bar'}],
-        'foo',
-        ]
+        [1, 2, 3, {"foo": "bar"}],
+        "foo",
+    ]
 
     describe_examples = [
-        (("elements differ:\n"
-          "reference = ['apple', 'orange', 'canteloupe', 'watermelon', 'lemon', 'banana']\n"
-          "actual    = ['orange', 'apple', 'banana', 'sparrow', 'lemon', 'canteloupe']\n"
-          ": \n"
-          "missing:    ['watermelon']\n"
-          "extra:      ['sparrow']"
-          ),
-         ['orange', 'apple', 'banana', 'sparrow', 'lemon', 'canteloupe',],
-         SameMembers(
-             ['apple', 'orange', 'canteloupe', 'watermelon',
-              'lemon', 'banana',])),
-        ]
+        (
+            (
+                "elements differ:\n"
+                "reference = ['apple', 'orange', 'canteloupe', 'watermelon', 'lemon', 'banana']\n"
+                "actual    = ['orange', 'apple', 'banana', 'sparrow', 'lemon', 'canteloupe']\n"
+                ": \n"
+                "missing:    ['watermelon']\n"
+                "extra:      ['sparrow']"
+            ),
+            [
+                "orange",
+                "apple",
+                "banana",
+                "sparrow",
+                "lemon",
+                "canteloupe",
+            ],
+            SameMembers(
+                [
+                    "apple",
+                    "orange",
+                    "canteloupe",
+                    "watermelon",
+                    "lemon",
+                    "banana",
+                ]
+            ),
+        ),
+    ]
 
     str_examples = [
-        ('SameMembers([1, 2, 3])', SameMembers([1, 2, 3])),
-        ]
+        ("SameMembers([1, 2, 3])", SameMembers([1, 2, 3])),
+    ]
 
 
 class TestMatchesRegex(TestCase, TestMatchersInterface):
-
-    matches_matcher = MatchesRegex('a|b')
-    matches_matches = ['a', 'b']
-    matches_mismatches = ['c']
+    matches_matcher = MatchesRegex("a|b")
+    matches_matches = ["a", "b"]
+    matches_mismatches = ["c"]
 
     str_examples = [
-        ("MatchesRegex('a|b')", MatchesRegex('a|b')),
-        ("MatchesRegex('a|b', re.M)", MatchesRegex('a|b', re.M)),
-        ("MatchesRegex('a|b', re.I|re.M)", MatchesRegex('a|b', re.I|re.M)),
-        ("MatchesRegex({!r})".format(_b("\xA7")), MatchesRegex(_b("\xA7"))),
-        ("MatchesRegex({!r})".format("\xA7"), MatchesRegex("\xA7")),
-        ]
+        ("MatchesRegex('a|b')", MatchesRegex("a|b")),
+        ("MatchesRegex('a|b', re.M)", MatchesRegex("a|b", re.M)),
+        ("MatchesRegex('a|b', re.I|re.M)", MatchesRegex("a|b", re.I | re.M)),
+        ("MatchesRegex({!r})".format(_b("\xa7")), MatchesRegex(_b("\xa7"))),
+        ("MatchesRegex({!r})".format("\xa7"), MatchesRegex("\xa7")),
+    ]
 
     describe_examples = [
-        ("'c' does not match /a|b/", 'c', MatchesRegex('a|b')),
-        ("'c' does not match /a\\d/", 'c', MatchesRegex(r'a\d')),
-        ("{!r} does not match /\\s+\\xa7/".format(_b('c')),
-            _b('c'), MatchesRegex(_b("\\s+\xA7"))),
-        ("{!r} does not match /\\s+\\xa7/".format('c'),
-            'c', MatchesRegex("\\s+\xA7")),
-        ]
+        ("'c' does not match /a|b/", "c", MatchesRegex("a|b")),
+        ("'c' does not match /a\\d/", "c", MatchesRegex(r"a\d")),
+        (
+            "{!r} does not match /\\s+\\xa7/".format(_b("c")),
+            _b("c"),
+            MatchesRegex(_b("\\s+\xa7")),
+        ),
+        ("{!r} does not match /\\s+\\xa7/".format("c"), "c", MatchesRegex("\\s+\xa7")),
+    ]
 
 
 class TestHasLength(TestCase, TestMatchersInterface):
-
     matches_matcher = HasLength(2)
     matches_matches = [[1, 2]]
     matches_mismatches = [[], [1], [3, 2, 1]]
 
     str_examples = [
         ("HasLength(2)", HasLength(2)),
-        ]
+    ]
 
     describe_examples = [
         ("len([]) != 1", [], HasLength(1)),
-        ]
+    ]
 
 
 def test_suite():
     from unittest import TestLoader
+
     return TestLoader().loadTestsFromName(__name__)

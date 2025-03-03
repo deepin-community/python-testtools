@@ -1,0 +1,43 @@
+Description: Prepare tests for upcoming twisted version
+ Twisted recently changed behavior of logger on failures [1]. It newly
+ logs the `Main loop terminated.` even on exceptions, which breaks two
+ test in twistedsupport test suite. This hack attempts to address the
+ upcoming issue.
+ .
+ [1] https://github.com/twisted/twisted/pull/12207
+From: Peter Vaněk <arkamar@atlas.cz>
+Date: Mon, 1 Jul 2024 10:00:05 +0200
+Origin: upstream, https://github.com/testing-cabal/testtools/pull/387
+Last-Update: 2024-11-07
+
+Index: python-testtools/testtools/tests/twistedsupport/test_runtest.py
+===================================================================
+--- python-testtools.orig/testtools/tests/twistedsupport/test_runtest.py
++++ python-testtools/testtools/tests/twistedsupport/test_runtest.py
+@@ -16,7 +16,6 @@ from testtools.matchers import (
+     Contains,
+     ContainsAll,
+     ContainsDict,
+-    EndsWith,
+     Equals,
+     Is,
+     KeysEqual,
+@@ -749,7 +748,7 @@ class TestAsynchronousDeferredRunTest(Ne
+                     test,
+                     {
+                         "traceback": Not(Is(None)),
+-                        "twisted-log": AsText(EndsWith(" foo\n")),
++                        "twisted-log": AsText(Contains(" foo\n")),
+                     },
+                 ),
+                 ("stopTest", test),
+@@ -790,7 +789,8 @@ class TestAsynchronousDeferredRunTest(Ne
+         result = self.make_result()
+         runner.run(result)
+         self.assertThat(
+-            messages, MatchesListwise([ContainsDict({"message": Equals(("foo",))})])
++            messages[0:1],
++            MatchesListwise([ContainsDict({"message": Equals(("foo",))})]),
+         )
+ 
+     def test_restore_observers(self):

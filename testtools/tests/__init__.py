@@ -15,7 +15,6 @@ def test_suite():
         test_compat,
         test_content,
         test_content_type,
-        test_distutilscmd,
         test_fixturesupport,
         test_helpers,
         test_monkey,
@@ -26,7 +25,8 @@ def test_suite():
         test_testresult,
         test_testsuite,
         test_with_with,
-        )
+    )
+
     modules = [
         matchers,
         twistedsupport,
@@ -34,7 +34,6 @@ def test_suite():
         test_compat,
         test_content,
         test_content_type,
-        test_distutilscmd,
         test_fixturesupport,
         test_helpers,
         test_monkey,
@@ -45,7 +44,7 @@ def test_suite():
         test_testresult,
         test_testsuite,
         test_with_with,
-        ]
+    ]
     suites = map(lambda x: x.test_suite(), modules)
     all_tests = TestSuite(suites)
     return TestSuite(testscenarios.generate_scenarios(all_tests))

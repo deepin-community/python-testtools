@@ -1,2 +1,3 @@
 neutralize-failing-test.patch
-remove-test_syntax_error_line_utf_8.patch
+removed-setuptools-from-pyproject-dependencies.patch
+Prepare_tests_for_upcoming_twisted_version.patch

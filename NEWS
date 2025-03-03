@@ -3,6 +3,55 @@ testtools NEWS
 
 Changes and improvements to testtools_, grouped by release.
 
+2.7.2
+~~~~~
+
+Improvements
+------------
+
+* Treat methodName="runTest" similar to unittest.TestCase,
+  fixes compatibility with pytest 8.3. (Natanael Copa, #372)
+
+* Format with ``ruff format``. (Jelmer Vernooĳ)
+
+* Use ruff for linting. (Jelmer Vernooĳ)
+
+* Fix compatibility with Python 3.12.1. (Matthew Treinish)
+
+* Deprecate SkippedTest exception. (Stephen Finucane)
+
+* Drop support for Python 3.7. (Jelmer Vernooĳ)
+
+2.7.1
+~~~~~
+
+Improvements
+------------
+
+* Remove various unused imports.
+  (Jelmer Vernooĳ)
+
+* Fix build backend. This should prevent version from being set to 0.0.0
+  when building wheels.  (Jelmer Vernooĳ, #363)
+
+2.7.0
+~~~~~
+
+Improvements
+------------
+
+* Fix compatibility with Python 3.12.
+  (Jake Lishman, #353)
+
+* Add typing in various modules (still lacking full coverage).
+  (Jelmer Vernooĳ)
+
+* Drop the 'test' command for distutils. This has been
+  deprecated since 2.6.0. (Jelmer Vernooĳ)
+
+* Drop support for Python 3.6.
+  (Jelmer Vernooĳ)
+
 2.6.0
 ~~~~~
 

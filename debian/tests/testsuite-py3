@@ -1,2 +1,7 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -e
+
+export SETUPTOOLS_SCM_PRETEND_VERSION=$(dpkg-parsechangelog -SVersion | sed -e 's/^[[:digit:]]*://' -e 's/[-].*//' -e 's/~/.0/' -e 's/+dfsg1//' | head -n 1)
+
 python3 -m testtools.run testtools.tests.test_suite

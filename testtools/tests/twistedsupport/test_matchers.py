@@ -3,7 +3,6 @@
 """Tests for Deferred matchers."""
 
 from testtools.content import TracebackContent
-from testtools.helpers import try_import
 from testtools.matchers import (
     AfterPreprocessing,
     Equals,
@@ -13,13 +12,10 @@ from testtools.matchers import (
 from ._helpers import NeedsTwistedTestCase
 
 
-has_no_result = try_import('testtools.twistedsupport.has_no_result')
-failed = try_import('testtools.twistedsupport.failed')
-succeeded = try_import('testtools.twistedsupport.succeeded')
+from testtools.twistedsupport import has_no_result, failed, succeeded
 
-
-defer = try_import('twisted.internet.defer')
-Failure = try_import('twisted.python.failure.Failure')
+from twisted.internet import defer
+from twisted.python.failure import Failure
 
 
 def mismatches(description, details=None):
@@ -27,15 +23,17 @@ def mismatches(description, details=None):
     if details is None:
         details = Equals({})
 
-    matcher = MatchesDict({
-        'description': description,
-        'details': details,
-    })
+    matcher = MatchesDict(
+        {
+            "description": description,
+            "details": details,
+        }
+    )
 
     def get_mismatch_info(mismatch):
         return {
-            'description': mismatch.describe(),
-            'details': mismatch.get_details(),
+            "description": mismatch.describe(),
+            "details": mismatch.get_details(),
         }
 
     return AfterPreprocessing(get_mismatch_info, matcher)
@@ -45,7 +43,7 @@ def make_failure(exc_value):
     """Raise ``exc_value`` and return the failure."""
     try:
         raise exc_value
-    except:
+    except BaseException:
         return Failure()
 
 
@@ -65,21 +63,27 @@ class NoResultTests(NeedsTwistedTestCase):
         deferred = defer.succeed(result)
         mismatch = self.match(deferred)
         self.assertThat(
-            mismatch, mismatches(Equals(
-                'No result expected on %r, found %r instead'
-                % (deferred, result))))
+            mismatch,
+            mismatches(
+                Equals(
+                    "No result expected on %r, found %r instead" % (deferred, result)
+                )
+            ),
+        )
 
     def test_failed_does_not_match(self):
         # A Deferred that's failed does not match has_no_result().
-        fail = make_failure(RuntimeError('arbitrary failure'))
+        fail = make_failure(RuntimeError("arbitrary failure"))
         deferred = defer.fail(fail)
         # Suppress unhandled error in Deferred.
         self.addCleanup(deferred.addErrback, lambda _: None)
         mismatch = self.match(deferred)
         self.assertThat(
-            mismatch, mismatches(Equals(
-                'No result expected on %r, found %r instead'
-                % (deferred, fail))))
+            mismatch,
+            mismatches(
+                Equals("No result expected on %r, found %r instead" % (deferred, fail))
+            ),
+        )
 
     def test_success_after_assertion(self):
         # We can create a Deferred, assert that it hasn't fired, then fire it
@@ -99,13 +103,12 @@ class NoResultTests(NeedsTwistedTestCase):
         self.assertThat(deferred, has_no_result())
         results = []
         deferred.addErrback(results.append)
-        fail = make_failure(RuntimeError('arbitrary failure'))
+        fail = make_failure(RuntimeError("arbitrary failure"))
         deferred.errback(fail)
         self.assertThat(results, Equals([fail]))
 
 
 class SuccessResultTests(NeedsTwistedTestCase):
-
     def match(self, matcher, value):
         return succeeded(matcher).match(value)
 
@@ -125,8 +128,8 @@ class SuccessResultTests(NeedsTwistedTestCase):
         mismatch = matcher.match(result)
         self.assertThat(
             self.match(matcher, deferred),
-            mismatches(Equals(mismatch.describe()),
-                       Equals(mismatch.get_details())))
+            mismatches(Equals(mismatch.describe()), Equals(mismatch.get_details())),
+        )
 
     def test_not_fired_fails(self):
         # A Deferred that has not yet fired fails to match.
@@ -135,50 +138,60 @@ class SuccessResultTests(NeedsTwistedTestCase):
         self.assertThat(
             self.match(arbitrary_matcher, deferred),
             mismatches(
-                Equals(('Success result expected on %r, found no result '
-                        'instead') % (deferred,))))
+                Equals(
+                    ("Success result expected on %r, found no result " "instead")
+                    % (deferred,)
+                )
+            ),
+        )
 
     def test_failing_fails(self):
         # A Deferred that has fired with a failure fails to match.
         deferred = defer.Deferred()
-        fail = make_failure(RuntimeError('arbitrary failure'))
+        fail = make_failure(RuntimeError("arbitrary failure"))
         deferred.errback(fail)
         arbitrary_matcher = Is(None)
         self.assertThat(
             self.match(arbitrary_matcher, deferred),
             mismatches(
                 Equals(
-                    'Success result expected on %r, found failure result '
-                     'instead: %r' % (deferred, fail)),
-                Equals({'traceback': TracebackContent(
-                    (fail.type, fail.value, fail.getTracebackObject()), None,
-                )}),
-            ))
+                    "Success result expected on %r, found failure result "
+                    "instead: %r" % (deferred, fail)
+                ),
+                Equals(
+                    {
+                        "traceback": TracebackContent(
+                            (fail.type, fail.value, fail.getTracebackObject()),
+                            None,
+                        )
+                    }
+                ),
+            ),
+        )
 
 
 class FailureResultTests(NeedsTwistedTestCase):
-
     def match(self, matcher, value):
         return failed(matcher).match(value)
 
     def test_failure_passes(self):
         # A Deferred that has fired with a failure matches against the value
         # it was fired with.
-        fail = make_failure(RuntimeError('arbitrary failure'))
+        fail = make_failure(RuntimeError("arbitrary failure"))
         deferred = defer.fail(fail)
         self.assertThat(self.match(Is(fail), deferred), Is(None))
 
     def test_different_failure_fails(self):
         # A Deferred that has fired with a failure matches against the value
         # it was fired with.
-        fail = make_failure(RuntimeError('arbitrary failure'))
+        fail = make_failure(RuntimeError("arbitrary failure"))
         deferred = defer.fail(fail)
         matcher = Is(None)  # Something that doesn't match `fail`.
         mismatch = matcher.match(fail)
         self.assertThat(
             self.match(matcher, deferred),
-            mismatches(Equals(mismatch.describe()),
-                       Equals(mismatch.get_details())))
+            mismatches(Equals(mismatch.describe()), Equals(mismatch.get_details())),
+        )
 
     def test_success_fails(self):
         # A Deferred that has fired successfully fails to match.
@@ -187,9 +200,13 @@ class FailureResultTests(NeedsTwistedTestCase):
         matcher = Is(None)  # Can be any matcher
         self.assertThat(
             self.match(matcher, deferred),
-            mismatches(Equals(
-                'Failure result expected on %r, found success '
-                'result (%r) instead' % (deferred, result))))
+            mismatches(
+                Equals(
+                    "Failure result expected on %r, found success "
+                    "result (%r) instead" % (deferred, result)
+                )
+            ),
+        )
 
     def test_no_result_fails(self):
         # A Deferred that has not fired fails to match.
@@ -197,11 +214,16 @@ class FailureResultTests(NeedsTwistedTestCase):
         matcher = Is(None)  # Can be any matcher
         self.assertThat(
             self.match(matcher, deferred),
-            mismatches(Equals(
-                'Failure result expected on %r, found no result instead'
-                % (deferred,))))
+            mismatches(
+                Equals(
+                    "Failure result expected on %r, found no result instead"
+                    % (deferred,)
+                )
+            ),
+        )
 
 
 def test_suite():
-    from unittest import TestLoader, TestSuite
+    from unittest import TestLoader
+
     return TestLoader().loadTestsFromName(__name__)
